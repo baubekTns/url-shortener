@@ -29,7 +29,7 @@ A production-inspired URL shortening service built with Java and Spring Boot.
 
 - [x] Create repository
 - [x] Generate Spring Boot project
-- [ ] Configure Docker
+- [x] Configure Docker
 - [ ] Configure PostgreSQL
 - [ ] Configure Redis
 
