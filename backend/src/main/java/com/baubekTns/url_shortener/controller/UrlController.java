@@ -6,6 +6,11 @@ import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.service.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,5 +32,17 @@ public class UrlController {
             "http://localhost:8080/" + url.getShortCode(),
             url.getOriginalUrl()
         );
+    }
+
+    @GetMapping("/{shortCode}")
+    public ResponseEntity<Void> redirect(
+            @PathVariable String shortCode
+    ) {
+
+        Url url = urlService.getByShortCode(shortCode);
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(url.getOriginalUrl()))
+                .build();
     }
 }

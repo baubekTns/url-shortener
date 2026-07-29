@@ -25,4 +25,15 @@ public class GlobalExceptionHandler {
 
         return errors;
     }
+
+    @ExceptionHandler(UrlNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleUrlNotFound(
+            UrlNotFoundException ex
+    ) {
+
+        return Map.of(
+                "error", ex.getMessage()
+        );
+    }
 }

@@ -1,6 +1,7 @@
 package com.baubekTns.url_shortener.service;
 
 import com.baubekTns.url_shortener.entity.Url;
+import com.baubekTns.url_shortener.exception.UrlNotFoundException;
 import com.baubekTns.url_shortener.repository.UrlRepository;
 import com.baubekTns.url_shortener.util.ShortCodeGenerator;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,11 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
     private final ShortCodeGenerator shortCodeGenerator;
+
+    public Url getByShortCode(String shortCode) {
+        return urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new UrlNotFoundException(shortCode));
+    }
 
     public Url createShortUrl(String originalUrl) {
 
