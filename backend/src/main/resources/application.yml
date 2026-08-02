@@ -6,7 +6,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/urlshortener
     username: postgres
     password: postgres
-    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -23,14 +22,11 @@ spring:
       host: localhost
       port: 6379
 
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 
-  app:
-    base-url: http://localhost:8080
-
-server:
-  port: 8080
+app:
+  base-url: http://localhost:8080
