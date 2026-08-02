@@ -6,12 +6,11 @@ import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.service.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import java.net.URI;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/urls")
@@ -21,17 +20,13 @@ public class UrlController {
     private final UrlService urlService;
 
     @PostMapping
-    public ShortUrlResponse createShortUrl(
+    public ResponseEntity<ShortUrlResponse> createShortUrl(
             @Valid @RequestBody CreateShortUrlRequest request
     ) {
 
-        Url url = urlService.createShortUrl(request.url());
+        ShortUrlResponse response = urlService.createShortUrl(request.url());
 
-        return new ShortUrlResponse(
-            url.getShortCode(),
-            "http://localhost:8080/" + url.getShortCode(),
-            url.getOriginalUrl()
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{shortCode}")

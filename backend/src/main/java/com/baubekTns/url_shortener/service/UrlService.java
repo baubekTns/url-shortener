@@ -1,7 +1,9 @@
 package com.baubekTns.url_shortener.service;
 
+import com.baubekTns.url_shortener.dto.ShortUrlResponse;
 import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.exception.UrlNotFoundException;
+import com.baubekTns.url_shortener.mapper.UrlMapper;
 import com.baubekTns.url_shortener.repository.UrlRepository;
 import com.baubekTns.url_shortener.util.ShortCodeGenerator;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,9 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
     private final ShortCodeGenerator shortCodeGenerator;
+    private final UrlMapper urlMapper;
 
-    public Url getByShortCode(String shortCode) {
-        return urlRepository.findByShortCode(shortCode)
-                .orElseThrow(() -> new UrlNotFoundException(shortCode));
-    }
-
-    public Url createShortUrl(String originalUrl) {
+    public ShortUrlResponse createShortUrl(String originalUrl) {
 
         String shortCode;
 
@@ -35,6 +33,13 @@ public class UrlService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return urlRepository.save(url);
+        Url saved = urlRepository.save(url);
+
+        return urlMapper.toResponse(saved);
+    }
+
+    public Url getByShortCode(String shortCode) {
+        return urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new UrlNotFoundException(shortCode));
     }
 }
