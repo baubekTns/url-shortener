@@ -26,7 +26,8 @@ public class UrlController {
 
         ShortUrlResponse response = urlService.createShortUrl(request.url());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping("/{shortCode}")
