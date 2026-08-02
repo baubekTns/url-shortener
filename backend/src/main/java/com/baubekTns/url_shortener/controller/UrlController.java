@@ -23,8 +23,10 @@ public class UrlController {
             @Valid @RequestBody CreateShortUrlRequest request
     ) {
 
-        ShortUrlResponse response =
-                urlService.createShortUrl(request.url());
+        ShortUrlResponse response = urlService.createShortUrl(
+                request.url(),
+                request.expiresInDays()
+        );
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);

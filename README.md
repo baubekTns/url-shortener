@@ -30,19 +30,19 @@ A production-inspired URL shortening service built with Java and Spring Boot.
 - [x] Create repository
 - [x] Generate Spring Boot project
 - [x] Configure Docker
-- [ ] Configure PostgreSQL
-- [ ] Configure Redis
+- [x] Configure PostgreSQL
+- [x] Configure Redis
 
 ### Phase 2 - Core Features
 
-- [ ] URL shortening
-- [ ] Redirect endpoint
-- [ ] Base62 short code generation
-- [ ] URL validation
+- [x] URL shortening
+- [x] Redirect endpoint
+- [x] Base62 short code generation
+- [x] URL validation
 
 ### Phase 3 - Performance
 
-- [ ] Redis caching
+- [x] Redis caching
 - [ ] Rate limiting
 - [ ] URL expiration
 
@@ -60,7 +60,7 @@ A production-inspired URL shortening service built with Java and Spring Boot.
 
 ### Phase 6 - Production
 
-- [ ] Docker Compose
-- [ ] Health checks
+- [x] Docker Compose
+- [x] Health checks
 - [ ] Metrics
 - [ ] CI/CD

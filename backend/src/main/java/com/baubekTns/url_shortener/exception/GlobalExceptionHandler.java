@@ -36,4 +36,15 @@ public class GlobalExceptionHandler {
                 "error", ex.getMessage()
         );
     }
+
+    @ExceptionHandler(UrlExpiredException.class)
+    @ResponseStatus(HttpStatus.GONE)
+    public Map<String, String> handleExpired(
+        UrlExpiredException ex
+    ) {
+    return Map.of(
+            "error",
+            ex.getMessage()
+        );
+    }
 }
