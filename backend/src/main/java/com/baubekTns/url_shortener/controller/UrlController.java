@@ -2,7 +2,6 @@ package com.baubekTns.url_shortener.controller;
 
 import com.baubekTns.url_shortener.dto.CreateShortUrlRequest;
 import com.baubekTns.url_shortener.dto.ShortUrlResponse;
-import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.service.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,8 @@ public class UrlController {
             @Valid @RequestBody CreateShortUrlRequest request
     ) {
 
-        ShortUrlResponse response = urlService.createShortUrl(request.url());
+        ShortUrlResponse response =
+                urlService.createShortUrl(request.url());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
@@ -35,10 +35,12 @@ public class UrlController {
             @PathVariable String shortCode
     ) {
 
-        Url url = urlService.getByShortCode(shortCode);
+        String originalUrl =
+                urlService.getOriginalUrl(shortCode);
 
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(url.getOriginalUrl()))
+                .location(URI.create(originalUrl))
                 .build();
     }
+
 }

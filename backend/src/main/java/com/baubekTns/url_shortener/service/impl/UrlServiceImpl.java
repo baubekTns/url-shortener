@@ -5,6 +5,7 @@ import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.exception.UrlNotFoundException;
 import com.baubekTns.url_shortener.mapper.UrlMapper;
 import com.baubekTns.url_shortener.repository.UrlRepository;
+import com.baubekTns.url_shortener.service.CacheService;
 import com.baubekTns.url_shortener.service.ShortCodeService;
 import com.baubekTns.url_shortener.service.UrlService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class UrlServiceImpl implements UrlService {
     private final UrlRepository urlRepository;
     private final ShortCodeService shortCodeService;
     private final UrlMapper urlMapper;
+    private final CacheService cacheService;
 
     @Override
     public ShortUrlResponse createShortUrl(String originalUrl) {
@@ -35,10 +37,23 @@ public class UrlServiceImpl implements UrlService {
     }
 
     @Override
-    public Url getByShortCode(String shortCode) {
+    public String getOriginalUrl(String shortCode) {
 
-        return urlRepository.findByShortCode(shortCode)
+        // Check Redis first
+        String cachedUrl = cacheService.get(shortCode);
+
+        if (cachedUrl != null) {
+            return cachedUrl;
+        }
+
+        // Fallback to PostgreSQL
+        Url url = urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() -> new UrlNotFoundException(shortCode));
 
+        // Store in Redis
+        cacheService.put(shortCode, url.getOriginalUrl());
+
+        return url.getOriginalUrl();
     }
+
 }
