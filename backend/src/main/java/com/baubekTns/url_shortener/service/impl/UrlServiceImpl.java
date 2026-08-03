@@ -1,11 +1,13 @@
 package com.baubekTns.url_shortener.service.impl;
 
 import com.baubekTns.url_shortener.dto.ShortUrlResponse;
+import com.baubekTns.url_shortener.dto.cache.CachedUrl;
 import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.exception.UrlExpiredException;
 import com.baubekTns.url_shortener.exception.UrlNotFoundException;
 import com.baubekTns.url_shortener.mapper.UrlMapper;
 import com.baubekTns.url_shortener.repository.UrlRepository;
+import com.baubekTns.url_shortener.service.AnalyticsService;
 import com.baubekTns.url_shortener.service.CacheService;
 import com.baubekTns.url_shortener.service.ShortCodeService;
 import com.baubekTns.url_shortener.service.UrlService;
@@ -20,11 +22,15 @@ public class UrlServiceImpl implements UrlService {
 
     private final UrlRepository urlRepository;
     private final ShortCodeService shortCodeService;
-    private final UrlMapper urlMapper;
     private final CacheService cacheService;
+    private final AnalyticsService analyticsService;
+    private final UrlMapper urlMapper;
 
     @Override
-    public ShortUrlResponse createShortUrl(String originalUrl, Integer expiresInDays) {
+    public ShortUrlResponse createShortUrl(
+            String originalUrl,
+            Integer expiresInDays
+    ) {
 
         LocalDateTime expiresAt = null;
 
@@ -33,11 +39,11 @@ public class UrlServiceImpl implements UrlService {
         }
 
         Url url = Url.builder()
-            .originalUrl(originalUrl)
-            .shortCode(shortCodeService.generateUniqueShortCode())
-            .createdAt(LocalDateTime.now())
-            .expiresAt(expiresAt)
-            .build();
+                .originalUrl(originalUrl)
+                .shortCode(shortCodeService.generateUniqueShortCode())
+                .createdAt(LocalDateTime.now())
+                .expiresAt(expiresAt)
+                .build();
 
         Url saved = urlRepository.save(url);
 
@@ -47,25 +53,39 @@ public class UrlServiceImpl implements UrlService {
     @Override
     public String getOriginalUrl(String shortCode) {
 
-        // Check Redis first
-        String cachedUrl = cacheService.get(shortCode);
+        CachedUrl cachedUrl = cacheService.get(shortCode);
 
         if (cachedUrl != null) {
-            return cachedUrl;
+
+            if (cachedUrl.expiresAt() != null &&
+                    cachedUrl.expiresAt().isBefore(LocalDateTime.now())) {
+
+                throw new UrlExpiredException(shortCode);
+            }
+
+            analyticsService.recordRedirect(shortCode);
+
+            return cachedUrl.originalUrl();
         }
 
-        // Fallback to PostgreSQL
         Url url = urlRepository.findByShortCode(shortCode)
-            .orElseThrow(() -> new UrlNotFoundException(shortCode));
+                .orElseThrow(() -> new UrlNotFoundException(shortCode));
 
         if (url.getExpiresAt() != null &&
-            url.getExpiresAt().isBefore(LocalDateTime.now())) {
+                url.getExpiresAt().isBefore(LocalDateTime.now())) {
 
             throw new UrlExpiredException(shortCode);
         }
 
-        // Store in Redis
-        cacheService.put(shortCode, url.getOriginalUrl());
+        cacheService.put(
+                shortCode,
+                new CachedUrl(
+                        url.getOriginalUrl(),
+                        url.getExpiresAt()
+                )
+        );
+
+        analyticsService.recordRedirect(shortCode);
 
         return url.getOriginalUrl();
     }

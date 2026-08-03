@@ -30,4 +30,10 @@ public class Url {
     @Column
     private LocalDateTime expiresAt;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Long clickCount = 0L;
+
+    @Column
+    private LocalDateTime lastAccessedAt;
 }
