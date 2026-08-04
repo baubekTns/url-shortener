@@ -43,8 +43,8 @@ A production-inspired URL shortening service built with Java and Spring Boot.
 ### Phase 3 - Performance
 
 - [x] Redis caching
-- [ ] Rate limiting
-- [ ] URL expiration
+- [x] Rate limiting
+- [x] URL expiration
 
 ### Phase 4 - Authentication
 
@@ -54,7 +54,8 @@ A production-inspired URL shortening service built with Java and Spring Boot.
 
 ### Phase 5 - Analytics
 
-- [ ] Click tracking
+- [x] Click tracking
+- [ ] Analytics endpoint
 - [ ] Background workers
 - [ ] Analytics dashboard
 
