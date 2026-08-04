@@ -2,6 +2,8 @@ package com.baubekTns.url_shortener.controller;
 
 import com.baubekTns.url_shortener.dto.CreateShortUrlRequest;
 import com.baubekTns.url_shortener.dto.ShortUrlResponse;
+import com.baubekTns.url_shortener.dto.UrlAnalyticsResponse;
+import com.baubekTns.url_shortener.service.AnalyticsService;
 import com.baubekTns.url_shortener.service.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +19,18 @@ import java.net.URI;
 public class UrlController {
 
     private final UrlService urlService;
+    private final AnalyticsService analyticsService;
 
     @PostMapping
     public ResponseEntity<ShortUrlResponse> createShortUrl(
             @Valid @RequestBody CreateShortUrlRequest request
     ) {
 
-        ShortUrlResponse response = urlService.createShortUrl(
-                request.url(),
-                request.expiresInDays()
-        );
+        ShortUrlResponse response =
+                urlService.createShortUrl(
+                        request.url(),
+                        request.expiresInDays()
+                );
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
@@ -43,6 +47,16 @@ public class UrlController {
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(originalUrl))
                 .build();
+    }
+
+    @GetMapping("/{shortCode}/analytics")
+    public ResponseEntity<UrlAnalyticsResponse> getAnalytics(
+            @PathVariable String shortCode
+    ) {
+
+        return ResponseEntity.ok(
+                analyticsService.getAnalytics(shortCode)
+        );
     }
 
 }

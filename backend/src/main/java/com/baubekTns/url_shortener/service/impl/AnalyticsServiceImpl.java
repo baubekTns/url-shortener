@@ -1,5 +1,6 @@
 package com.baubekTns.url_shortener.service.impl;
 
+import com.baubekTns.url_shortener.dto.UrlAnalyticsResponse;
 import com.baubekTns.url_shortener.entity.Url;
 import com.baubekTns.url_shortener.exception.UrlNotFoundException;
 import com.baubekTns.url_shortener.repository.UrlRepository;
@@ -26,4 +27,21 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         urlRepository.save(url);
     }
+
+    @Override
+    public UrlAnalyticsResponse getAnalytics(String shortCode) {
+
+        Url url = urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new UrlNotFoundException(shortCode));
+
+        return new UrlAnalyticsResponse(
+                url.getShortCode(),
+                url.getOriginalUrl(),
+                url.getClickCount(),
+                url.getCreatedAt(),
+                url.getLastAccessedAt(),
+                url.getExpiresAt()
+        );
+    }
+
 }
