@@ -3,6 +3,7 @@ package com.baubekTns.url_shortener.service.impl;
 import com.baubekTns.url_shortener.dto.auth.RegisterRequest;
 import com.baubekTns.url_shortener.dto.auth.UserResponse;
 import com.baubekTns.url_shortener.entity.User;
+import com.baubekTns.url_shortener.exception.EmailAlreadyExistsException;
 import com.baubekTns.url_shortener.mapper.UserMapper;
 import com.baubekTns.url_shortener.repository.UserRepository;
 import com.baubekTns.url_shortener.service.AuthService;
@@ -22,7 +23,7 @@ public class AuthServiceImpl implements AuthService {
     public UserResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already exists.");
+            throw new EmailAlreadyExistsException(request.email());
         }
 
         User user = User.builder()

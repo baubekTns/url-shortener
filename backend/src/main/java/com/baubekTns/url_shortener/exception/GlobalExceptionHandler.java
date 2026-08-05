@@ -54,4 +54,19 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ProblemDetail handleEmailAlreadyExists(
+            EmailAlreadyExistsException ex
+    ) {
+
+        ProblemDetail problem =
+                ProblemDetail.forStatus(HttpStatus.CONFLICT);
+
+        problem.setTitle("Email Already Exists");
+        problem.setDetail(ex.getMessage());
+
+        return problem;
+    }
+
 }
