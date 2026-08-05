@@ -36,6 +36,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 }
 
 tasks.withType<Test> {
