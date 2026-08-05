@@ -1,4 +1,9 @@
 services:
+  app:
+  environment:
+    JWT_SECRET: ${JWT_SECRET}
+    JWT_EXPIRATION: ${JWT_EXPIRATION}
+
   postgres:
     image: postgres:17
     container_name: url-shortener-postgres
