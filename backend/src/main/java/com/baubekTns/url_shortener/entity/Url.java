@@ -36,4 +36,8 @@ public class Url {
 
     @Column
     private LocalDateTime lastAccessedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
