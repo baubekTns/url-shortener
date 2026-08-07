@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,16 +24,19 @@ public class UrlController {
 
     @PostMapping
     public ResponseEntity<ShortUrlResponse> createShortUrl(
-            @Valid @RequestBody CreateShortUrlRequest request
+            @Valid @RequestBody CreateShortUrlRequest request,
+            Authentication authentication
     ) {
 
         ShortUrlResponse response =
                 urlService.createShortUrl(
                         request.url(),
-                        request.expiresInDays()
+                        request.expiresInDays(),
+                        authentication.getName()
                 );
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(response);
     }
 
@@ -44,19 +48,23 @@ public class UrlController {
         String originalUrl =
                 urlService.getOriginalUrl(shortCode);
 
-        return ResponseEntity.status(HttpStatus.FOUND)
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
                 .location(URI.create(originalUrl))
                 .build();
     }
 
     @GetMapping("/{shortCode}/analytics")
     public ResponseEntity<UrlAnalyticsResponse> getAnalytics(
-            @PathVariable String shortCode
+            @PathVariable String shortCode,
+            Authentication authentication
     ) {
 
         return ResponseEntity.ok(
-                analyticsService.getAnalytics(shortCode)
+                analyticsService.getAnalytics(
+                        shortCode,
+                        authentication.getName()
+                )
         );
     }
-
 }

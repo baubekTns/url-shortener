@@ -6,6 +6,8 @@ public interface AnalyticsService {
 
     void recordRedirect(String shortCode);
 
-    UrlAnalyticsResponse getAnalytics(String shortCode);
-
+    UrlAnalyticsResponse getAnalytics(
+            String shortCode,
+            String userEmail
+    );
 }

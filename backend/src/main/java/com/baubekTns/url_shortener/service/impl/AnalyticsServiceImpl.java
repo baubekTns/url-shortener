@@ -20,7 +20,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     public void recordRedirect(String shortCode) {
 
         Url url = urlRepository.findByShortCode(shortCode)
-                .orElseThrow(() -> new UrlNotFoundException(shortCode));
+                .orElseThrow(() ->
+                        new UrlNotFoundException(shortCode)
+                );
 
         url.setClickCount(url.getClickCount() + 1);
         url.setLastAccessedAt(LocalDateTime.now());
@@ -29,10 +31,19 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
-    public UrlAnalyticsResponse getAnalytics(String shortCode) {
+    public UrlAnalyticsResponse getAnalytics(
+            String shortCode,
+            String userEmail
+    ) {
 
-        Url url = urlRepository.findByShortCode(shortCode)
-                .orElseThrow(() -> new UrlNotFoundException(shortCode));
+        Url url = urlRepository
+                .findByShortCodeAndUserEmail(
+                        shortCode,
+                        userEmail
+                )
+                .orElseThrow(() ->
+                        new UrlNotFoundException(shortCode)
+                );
 
         return new UrlAnalyticsResponse(
                 url.getShortCode(),
@@ -43,5 +54,4 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 url.getExpiresAt()
         );
     }
-
 }

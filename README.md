@@ -21,9 +21,9 @@
 
 ### Phase 4 - Authentication
 
-- [ ] User registration
-- [ ] JWT authentication
-- [ ] User dashboard
+- [x] User registration
+- [x] JWT authentication
+- [x] User dashboard
 
 ### Phase 5 - Analytics
 
