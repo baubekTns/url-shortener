@@ -34,5 +34,5 @@
 
 - [x] Docker Compose
 - [x] Health checks
-- [ ] Metrics
-- [ ] CI/CD
+- [x] Metrics
+- [x] CI/CD
