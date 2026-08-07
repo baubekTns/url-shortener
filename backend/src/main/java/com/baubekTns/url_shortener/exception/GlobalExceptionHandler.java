@@ -2,15 +2,14 @@ package com.baubekTns.url_shortener.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UrlNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ProblemDetail handleUrlNotFound(
             UrlNotFoundException ex
     ) {
@@ -25,7 +24,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UrlExpiredException.class)
-    @ResponseStatus(HttpStatus.GONE)
     public ProblemDetail handleExpired(
             UrlExpiredException ex
     ) {
@@ -40,13 +38,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RateLimitExceededException.class)
-    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     public ProblemDetail handleRateLimitExceeded(
             RateLimitExceededException ex
     ) {
 
         ProblemDetail problem =
-                ProblemDetail.forStatus(HttpStatus.TOO_MANY_REQUESTS);
+                ProblemDetail.forStatus(
+                        HttpStatus.TOO_MANY_REQUESTS
+                );
 
         problem.setTitle("Rate Limit Exceeded");
         problem.setDetail(ex.getMessage());
@@ -55,7 +54,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
     public ProblemDetail handleEmailAlreadyExists(
             EmailAlreadyExistsException ex
     ) {
@@ -69,4 +67,42 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ProblemDetail handleInvalidCredentials(
+            InvalidCredentialsException ex
+    ) {
+
+        ProblemDetail problem =
+                ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+
+        problem.setTitle("Invalid Credentials");
+        problem.setDetail(ex.getMessage());
+
+        return problem;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidation(
+            MethodArgumentNotValidException ex
+    ) {
+
+        ProblemDetail problem =
+                ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        problem.setTitle("Validation Failed");
+        problem.setDetail(
+                ex.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .findFirst()
+                        .map(error ->
+                                error.getField()
+                                        + ": "
+                                        + error.getDefaultMessage()
+                        )
+                        .orElse("Invalid request")
+        );
+
+        return problem;
+    }
 }

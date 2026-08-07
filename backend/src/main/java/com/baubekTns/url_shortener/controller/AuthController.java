@@ -1,5 +1,7 @@
 package com.baubekTns.url_shortener.controller;
 
+import com.baubekTns.url_shortener.dto.auth.LoginRequest;
+import com.baubekTns.url_shortener.dto.auth.LoginResponse;
 import com.baubekTns.url_shortener.dto.auth.RegisterRequest;
 import com.baubekTns.url_shortener.dto.auth.UserResponse;
 import com.baubekTns.url_shortener.service.AuthService;
@@ -21,11 +23,21 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request
     ) {
 
-        UserResponse response = authService.register(request);
+        UserResponse response =
+                authService.register(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+
+        return ResponseEntity.ok(
+                authService.login(request)
+        );
+    }
 }

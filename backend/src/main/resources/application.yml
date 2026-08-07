@@ -30,7 +30,6 @@ management:
 
 app:
   base-url: http://localhost:8080
-
   rate-limit: 100
   rate-limit-window-seconds: 60
 
